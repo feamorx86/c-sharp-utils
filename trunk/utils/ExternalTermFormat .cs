@@ -430,8 +430,13 @@ public class Term
 	
 	public float GetFloat(int index)
 	{
-		return TupleVal[index].FloatVal;
+		return (float)TupleVal[index].FloatVal;
 	}
+
+    public double GetDouble(int index)
+    {
+        return TupleVal[index].FloatVal;
+    }
 	
 	public byte [] GetData(int index)
 	{

@@ -134,11 +134,10 @@ public class GameNetwork
 	
 	public MessageToRead ReadTable_Find(int Message)
 	{
-		MessageToRead result;
-		if (!Sorting.BinarySearch<MessageToRead>(ReadTable,ref result,MessageToRead.CompareByID))
-			return null;
-		else
-			return result;
+		MessageToRead result=null;
+        Sorting.BinarySearch<MessageToRead>(ReadTable, ref result, delegate(MessageToRead msr)
+        { if (Message > msr.ID) return 1; if (Message < msr.ID) return -1; return 0; });
+        return result;
 	}
 	public MessageToRead RegisterMessageHandler(int msgID, OnMessage Handler)
     {
@@ -153,10 +152,11 @@ public class GameNetwork
   
 		return msg;
     }
-    public bool UnRegisterMessageHandler(int msgID)
-    {
-        return ReadTable.Remove(msgID);
-    }
+
+    //public bool UnRegisterMessageHandler(int msgID)
+    //{
+    //    return ReadTable.Remove(msgID);
+    //}
 
     public LinkedList<SendingMessage> MessagesToSend;
     public LinkedList<ReceivedMessage> MessagesToRead;
@@ -168,11 +168,12 @@ public class GameNetwork
 
     Thread ReadThread,WriteThread;
 
-    public bool void Init()
+    public static bool Init()
     {
         if (Instance != null)
         {
-            throw new Exception("GameNetwork already created");
+            Log.LogError("GameNetwork already created");
+            return false;
         }
         Instance = new GameNetwork();
 
@@ -191,6 +192,8 @@ public class GameNetwork
         Instance.WriteLocker = new object();
 
         Instance.IsError = false;
+
+        return true;
     }
 
     public void Start(string Address,int Port)
@@ -482,7 +485,7 @@ public class GameNetwork
                 {
                     //nothinc 
                     p_currentMsg = null;
-                    throw new Exception("GameNetwork.ParseMessage: Невозможная ситуация, Блядь!");
+                    Log.LogError("GameNetwork.ParseMessage: Невозможная ситуация, Блядь!");
 
                 }
                 return;
@@ -548,7 +551,7 @@ public class GameNetwork
                         pd_needbytes = 1;
                         return;
                          */
-                        throw new Exception("GameNetwork.ParseMessage: Т.е. было прочитано 0 байт. Блядь!");
+                        Log.LogError("GameNetwork.ParseMessage: Т.е. было прочитано 0 байт. Блядь!");
                     }
                     else
                     {
@@ -571,7 +574,7 @@ public class GameNetwork
                             pd_index += 1;
                         }
                         else
-                            throw new Exception("GameNetwork.ParseMessage: Т.е. было прочитано 0 байт. Блядь!");
+                            Log.LogError("GameNetwork.ParseMessage: Т.е. было прочитано 0 байт. Блядь!");
                         return;
                     }
                     else
@@ -601,7 +604,7 @@ public class GameNetwork
                         pd_index += 1;
                     }
                     else
-                        throw new Exception("GameNetwork.ParseMessage: Т.е. было прочитано 0 байт. Блядь!");
+                        Log.LogError("GameNetwork.ParseMessage: Т.е. было прочитано 0 байт. Блядь!");
 
                     return;
                 }
