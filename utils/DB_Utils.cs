@@ -2,12 +2,20 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SQLite;
 using System.Text;
 using System.Reflection;
 using System.Xml;
 using System.Windows.Forms;
- 
+
+#if sqlite
+using System.Data.SQLite;
+#endif
+
+#if postgres
+using Npgsql;
+#endif
+
+
     [AttributeUsage(AttributeTargets.Class)]
     public class CanSQLSync : Attribute
     {
@@ -1125,7 +1133,8 @@ using System.Windows.Forms;
             }
             return true;
         }
-
+        //Sqlite specific
+        #if sqlite
         public static bool TrySafeInsert(SQLiteConnection Connection, TypeSqlableInfo info, Object Value,ref int AddedID)
         {
             //Can begin command
@@ -1175,7 +1184,7 @@ using System.Windows.Forms;
             }
             return true;
         }
-
+        #endif
         public static bool TrySafeUpdate(DbConnection Connection, TypeSqlableInfo info, Object Value, string Where, ref string err)
         {
             //Can begin command

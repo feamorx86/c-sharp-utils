@@ -212,7 +212,7 @@ public class MetaDataClass
 		block.SetAttribute("Name",Name);
         block.SetAttribute("Description", Description);
         block.SetAttribute("IsInstanced", IsInstanced.ToString());
-		TextBlock tb=block.AddChild("Fields");
+		ETF_TextBlock tb=block.AddChild("Fields");
 		
 		foreach(MetaDataField field in Fields)
 		{
@@ -354,7 +354,7 @@ public class MetaDataObject
 	
 	public void SaveToBlock(ETF_TextBlock block)
 	{
-		TextBlock tb;
+		ETF_TextBlock tb;
 		MetaDataObject mdo;
 		string s;
 		foreach(MetaDataField finfo in Values.Keys)
@@ -600,7 +600,7 @@ public class MetaDataUsing
 		else
 			w=new StreamWriter(File.Create(FileName));
 		
-		TextBlock block=new TextBlock();
+		ETF_TextBlock block=new ETF_TextBlock();
 		foreach(MetaDataClass mdc in Classes.Values)
 		{
 			mdc.SaveToBlock(block.AddChild("class"));
@@ -620,11 +620,11 @@ public class MetaDataUsing
         Err = "";
         if (!File.Exists(FileName)) { Err="File="+FileName+" not found";return; }
         StreamReader r = new StreamReader(File.OpenRead(FileName));
-        TextBlock block = TextBlock.Parse(r.ReadToEnd(), out Err);
+        ETF_TextBlock block = ETF_TextBlock.Parse(r.ReadToEnd(), out Err);
         if (block == null || !string.IsNullOrEmpty(Err)) return;
 
         MetaDataClass cls;
-        foreach (TextBlock tb in block.Children)
+        foreach (ETF_TextBlock tb in block.Children)
         {
             if (tb.Name != "class") continue;
             cls = new MetaDataClass();
