@@ -1,4 +1,4 @@
- using System;
+using System;
 
 public class CachedLinkedListNode<T> 
 {
@@ -305,21 +305,21 @@ public class CachedLinkedList<T>
     {
         if (node == Last) 
         {
-                node.Next = newNode;
-                newNode.Previous = node;
-                newNode.Next = null;
-                Last = newNode;
+            node.Next = newNode;
+            newNode.Previous = node;
+            newNode.Next = null;
+            Last = newNode;
         } 
         else 
         {
-                CachedLinkedListNode<T> nextNode = node.Next;
-                node.Next = newNode;
-                newNode.Previous = node;
+            CachedLinkedListNode<T> nextNode = node.Next;
+            node.Next = newNode;
+            newNode.Previous = node;
 
-                nextNode.Previous = newNode;
-                newNode.Next = nextNode;
+            nextNode.Previous = newNode;
+            newNode.Next = nextNode;
         }
-        ++_count;
+        _count++;
 	}
 
     public CachedLinkedListNode<T> AddAfter(CachedLinkedListNode<T> node, T value)
@@ -342,7 +342,7 @@ public class CachedLinkedList<T>
             nextNode.Previous = newNode;
             newNode.Next = nextNode;
         }
-        ++_count;
+        _count++;
         return newNode;
     }
 
@@ -364,7 +364,7 @@ public class CachedLinkedList<T>
             PrevNode.Next = newNode;
             newNode.Previous = PrevNode;
         }
-        ++_count;
+        _count++;
     }
 
     public CachedLinkedListNode<T> AddBefore(CachedLinkedListNode<T> node, T value) 
@@ -386,7 +386,7 @@ public class CachedLinkedList<T>
             PrevNode.Next = newNode;
             newNode.Previous = PrevNode;
         }
-        ++_count;
+        _count++;
         return newNode;
     }
 
@@ -396,7 +396,7 @@ public class CachedLinkedList<T>
         node.Previous = null;
         node.Next = First;
         First = node;
-        ++_count;
+        _count++;
     }
 
     public CachedLinkedListNode<T> AddFirst(T value)
@@ -406,7 +406,7 @@ public class CachedLinkedList<T>
         node.Previous = null;
         node.Next = First;
         First = node;
-        ++_count;
+        _count++;
         return node;
     }
 
@@ -416,7 +416,7 @@ public class CachedLinkedList<T>
         node.Previous = Last;
         node.Next = null;
         Last = node;
-        ++_count;
+        _count++;
     }
 
     public CachedLinkedListNode<T> AddLast(T value)
@@ -426,7 +426,7 @@ public class CachedLinkedList<T>
         node.Previous = Last;
         node.Next = null;
         Last = node;
-        ++_count;
+        _count++;
         return node;
     }
 
@@ -434,7 +434,7 @@ public class CachedLinkedList<T>
     {
         if (_count == 0)
                 return;
-        CachedLinkedListNode<T> i = _first, j;
+        /*CachedLinkedListNode<T> i = _first, j;
 
         Cont:
         j = i.Next;
@@ -451,10 +451,308 @@ public class CachedLinkedList<T>
             i = j;
             goto Cont;
         }
-        Final:
+        Final:*/
         _first = null;
         _last = null;
         _count = 0;
+    }
+
+    public bool Contains(T value) 
+    {
+        CachedLinkedListNode<T> i = _first;
+        while (i != null) 
+        {
+            if (i.Value.Equals(value))
+                return true;
+            i = i.Next;
+        }
+        return false;
+    }
+
+	public CachedLinkedListNode<T> Find(T value) 
+	{
+	    CachedLinkedListNode<T> i = _first;
+	    while (i != null) 
+		{
+            if (i.Value.Equals(value))
+                return i;
+            i = i.Next;
+	    }
+	    return null;
+	}
+
+	public CachedLinkedListNode<T> FindLast(T value) 
+	{
+		CachedLinkedListNode<T> i = _last;
+		while (i != null)
+		{
+	        if (i.Value.Equals(value))
+                return i;
+	        i = i.Previous;
+		}
+		return null;
+	}
+
+    public void Remove(CachedLinkedListNode<T> node) 
+    {
+        if (node == First)
+        {
+            First = First.Next;
+            if (First != null)
+                First.Previous = null;
+            else
+                Last = null;
+        }
+		else
+        if (node == Last) 
+        {
+            Last = Last.Previous;
+            if (Last != null)
+                Last.Next = null;
+            else
+                First = null;
+		}
+        else
+		{
+            node.Next.Previous = node.Previous;
+            node.Previous.Next = node.Next;
+		}
+        Cach.AddToCach(node);
+        _count--;
+	}
+
+    public bool Remove(T value)
+    {
+        if (Count == 0)
+            return false;
+        CachedLinkedListNode<T> node = Find(value);
+        if (node == null)
+            return false;
+        Remove(node);
+        return true;
+	}
+
+    public void RemoveFirst()
+    {
+        if (Count == 0)
+            return;
+        CachedLinkedListNode<T> i = First;
+        First = First.Next;
+        if (First != null)
+            First.Previous = null;
+        else
+            Last = null;
+        _count--;
+        Cach.AddToCach(i);
+	}
+
+    public void RemoveLast()
+    {
+        if (Count == 0)
+            return;
+        CachedLinkedListNode<T> i = Last;
+        Last = Last.Previous;
+        if (Last != null)
+            Last.Next = null;
+        else
+            First = null;
+        _count--;
+        Cach.AddToCach(i);
+	}
+}
+
+public class S_LinkedList
+{
+	
+    CachedLinkedListNode<T> _first;
+    CachedLinkedListNode<T> _last;
+
+    int _count;
+
+    public S_LinkedList() 
+    {
+        _first = null;
+        _last = null;
+        _count = 0;
+    }
+
+    ~S_LinkedList()
+    {
+        Clear();
+    }
+
+    public int Count 
+    {
+        get { return _count; }
+    }
+
+    public CachedLinkedListNode<T> First 
+    {
+        get { return _first; }
+        set { _last = value; }
+    }
+
+    public CachedLinkedListNode<T> Last 
+    {
+        get { return _last; }
+        set { _last = value; }
+    }
+
+
+    public void AddAfter(CachedLinkedListNode<T> node, CachedLinkedListNode<T> newNode) 
+    {
+        if (node == Last) 
+        {
+            node.Next = newNode;
+            newNode.Previous = node;
+            newNode.Next = null;
+            Last = newNode;
+        } 
+        else 
+        {
+            CachedLinkedListNode<T> nextNode = node.Next;
+            node.Next = newNode;
+            newNode.Previous = node;
+
+            nextNode.Previous = newNode;
+            newNode.Next = nextNode;
+        }
+        _count++;
+	}
+
+    public CachedLinkedListNode<T> AddAfter(CachedLinkedListNode<T> node, T value)
+    {
+        CachedLinkedListNode<T> newNode = new CachedLinkedListNode<T>(value);
+        
+        if (node == Last)
+        {
+            node.Next = newNode;
+            newNode.Previous = node;
+            newNode.Next = null;
+            Last = newNode;
+        } 
+        else 
+        {
+            CachedLinkedListNode<T> nextNode = node.Next;
+            node.Next = newNode;
+            newNode.Previous = node;
+
+            nextNode.Previous = newNode;
+            newNode.Next = nextNode;
+        }
+        _count++;
+        return newNode;
+    }
+
+    public void AddBefore(CachedLinkedListNode<T> node, CachedLinkedListNode<T> newNode) 
+    {
+        if (node == First) 
+        {
+            node.Previous = newNode;
+            newNode.Previous = null;
+            newNode.Next = node;
+            First = newNode;
+        } 
+        else 
+        {
+            CachedLinkedListNode<T> PrevNode = node.Previous;
+            node.Previous = newNode;
+            newNode.Next = node;
+
+            PrevNode.Next = newNode;
+            newNode.Previous = PrevNode;
+        }
+        _count++;
+    }
+
+    public CachedLinkedListNode<T> AddBefore(CachedLinkedListNode<T> node, T value) 
+    {
+        CachedLinkedListNode<T> newNode = new CachedLinkedListNode<T>(value);
+        if (node == First) 
+        {
+            node.Previous = newNode;
+            newNode.Previous = null;
+            newNode.Next = node;
+            First = newNode;
+        }
+        else 
+        {
+            CachedLinkedListNode<T> PrevNode = node.Previous;
+            node.Previous = newNode;
+            newNode.Next = node;
+
+            PrevNode.Next = newNode;
+            newNode.Previous = PrevNode;
+        }
+        _count++;
+        return newNode;
+    }
+
+    public void AddFirst(CachedLinkedListNode<T> node)
+    {
+        First.Previous = node;
+        node.Previous = null;
+        node.Next = First;
+        First = node;
+        _count++;
+    }
+
+    public CachedLinkedListNode<T> AddFirst(T value)
+    {
+        CachedLinkedListNode<T> node = Cach.GetFromCach(value);
+        First.Previous = node;
+        node.Previous = null;
+        node.Next = First;
+        First = node;
+        _count++;
+        return node;
+    }
+
+	public void AddLast(CachedLinkedListNode<T> node) 
+    {
+        Last.Next = node;
+        node.Previous = Last;
+        node.Next = null;
+        Last = node;
+        _count++;
+    }
+
+    public CachedLinkedListNode<T> AddLast(T value)
+    {
+        CachedLinkedListNode<T> node = Cach.GetFromCach(value);
+        Last.Next = node;
+        node.Previous = Last;
+        node.Next = null;
+        Last = node;
+        _count++;
+        return node;
+    }
+
+    public void Clear() 
+    {
+        if (_count == 0)
+                return;
+        /*CachedLinkedListNode<T> i = _first, j;
+
+        Cont:
+        j = i.Next;
+        i.Next = null;
+        i.Previous = null;
+        i.Value = default(T);
+
+        if (j == null) 
+        {
+			goto Final;
+        }
+        else
+        {
+            i = j;
+            goto Cont;
+        }
+        Final:  -- Это делает GC*/
+        _first = null;
+        _last = null;
+        _count = 0;        
     }
 
     public bool Contains(T value) 
@@ -474,9 +772,9 @@ public class CachedLinkedList<T>
 	    CachedLinkedListNode<T> i = _first;
 	    while (i != null) 
 		{
-	            if (i.Value.Equals(value))
-	                    return i;
-	            i = i.Next;
+            if (i.Value.Equals(value))
+                    return i;
+            i = i.Next;
 	    }
 	    return null;
 	}
@@ -516,18 +814,17 @@ public class CachedLinkedList<T>
 		{
             node.Next.Previous = node.Previous;
             node.Previous.Next = node.Next;
-		}
-        Cach.AddToCach(node);
-        --_count;
+		}        
+        _count--;
 	}
 
     public bool Remove(T value)
     {
         if (Count == 0)
-                return false;
+            return false;
         CachedLinkedListNode<T> node = Find(value);
         if (node == null)
-                return false;
+            return false;
         Remove(node);
         return true;
 	}
@@ -535,28 +832,26 @@ public class CachedLinkedList<T>
     public void RemoveFirst()
     {
         if (Count == 0)
-                return;
+            return;
         CachedLinkedListNode<T> i = First;
         First = First.Next;
         if (First != null)
-                First.Previous = null;
+            First.Previous = null;
         else
-                Last = null;
-        --_count;
-        Cach.AddToCach(i);
+            Last = null;
+        _count--;        
 	}
 
     public void RemoveLast()
     {
         if (Count == 0)
-                return;
+            return;
         CachedLinkedListNode<T> i = Last;
         Last = Last.Previous;
         if (Last != null)
-                Last.Next = null;
-        else
-                First = null;
-        --_count;
-        Cach.AddToCach(i);
+            Last.Next = null;
+	    else
+            First = null;
+        _count--;        
 	}
 }
